@@ -109,18 +109,22 @@ export default function Dashboard() {
           <div className="glass-card fade-in stagger-3">
             <p className="text-card-title mb-4">Quick Access</p>
             <div className="space-y-2">
+              <button onClick={() => navigate('/journal')} className="flex w-full items-center gap-3 rounded-xl p-3 text-sm transition-colors hover:bg-muted">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'hsl(var(--teal-light))' }}>📝</span>
+                <span>Daily Journal</span>
+              </button>
+              <button onClick={() => navigate('/progress')} className="flex w-full items-center gap-3 rounded-xl p-3 text-sm transition-colors hover:bg-muted">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'hsl(var(--lavender-light))' }}>📈</span>
+                <span>Skin Progress</span>
+              </button>
               <button onClick={() => navigate('/history')} className="flex w-full items-center gap-3 rounded-xl p-3 text-sm transition-colors hover:bg-muted">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'hsl(var(--lavender-light))' }}>📊</span>
                 <span>Scan History</span>
               </button>
               <button onClick={() => navigate('/settings')} className="flex w-full items-center gap-3 rounded-xl p-3 text-sm transition-colors hover:bg-muted">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'hsl(var(--teal-light))' }}>⚙️</span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'hsl(var(--muted))' }}>⚙️</span>
                 <span>Settings</span>
               </button>
-            </div>
-            <div className="mt-4 rounded-2xl p-4" style={{ background: 'hsl(var(--lavender-light))' }}>
-              <p className="text-micro font-semibold" style={{ color: 'hsl(var(--accent-foreground))' }}>Progress Tracking</p>
-              <p className="text-micro text-muted-foreground">Coming soon — track trends over time</p>
             </div>
           </div>
         </div>
