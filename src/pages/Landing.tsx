@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import heroBg from '@/assets/hero-bg.jpg';
 
 export default function Landing() {
   const navigate = useNavigate();
