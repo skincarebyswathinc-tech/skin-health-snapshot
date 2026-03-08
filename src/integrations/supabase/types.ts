@@ -131,6 +131,63 @@ export type Database = {
         }
         Relationships: []
       }
+      referrals: {
+        Row: {
+          created_at: string
+          id: string
+          referral_code: string
+          referred_user_id: string | null
+          referrer_user_id: string
+          reward_granted: boolean
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          referral_code: string
+          referred_user_id?: string | null
+          referrer_user_id: string
+          reward_granted?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          referral_code?: string
+          referred_user_id?: string | null
+          referrer_user_id?: string
+          reward_granted?: boolean
+        }
+        Relationships: []
+      }
+      scan_usage: {
+        Row: {
+          bonus_scans: number
+          created_at: string
+          id: string
+          month: number
+          scan_count: number
+          user_id: string
+          year: number
+        }
+        Insert: {
+          bonus_scans?: number
+          created_at?: string
+          id?: string
+          month: number
+          scan_count?: number
+          user_id: string
+          year: number
+        }
+        Update: {
+          bonus_scans?: number
+          created_at?: string
+          id?: string
+          month?: number
+          scan_count?: number
+          user_id?: string
+          year?: number
+        }
+        Relationships: []
+      }
       scans: {
         Row: {
           created_at: string
@@ -228,6 +285,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      subscriptions: {
+        Row: {
+          created_at: string
+          id: string
+          plan_type: string
+          renewal_date: string | null
+          start_date: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          plan_type?: string
+          renewal_date?: string | null
+          start_date?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          plan_type?: string
+          renewal_date?: string | null
+          start_date?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      usage_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {
