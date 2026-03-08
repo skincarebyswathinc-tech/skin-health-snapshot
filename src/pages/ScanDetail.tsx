@@ -146,6 +146,18 @@ export default function ScanDetail() {
           </div>
         </div>
 
+        {/* Nutrition Recommendations */}
+        <div className="mb-8 fade-in stagger-5">
+          <NutritionPanel
+            metrics={{
+              hydrationScore: scan.hydration_score,
+              pigmentationScore: scan.pigmentation_score,
+              inflammationScore: scan.inflammation_score,
+              elasticityScore: scan.elasticity_score,
+            }}
+          />
+        </div>
+
         {/* Summary */}
         <div className="mb-8 glass-panel fade-in stagger-5">
           <h2 className="text-section-title mb-3">Summary Insights</h2>
