@@ -6,6 +6,7 @@ import { useSubscription, incrementScanCount, trackEvent } from '@/hooks/useSubs
 import AppLayout from '@/components/AppLayout';
 import PageHeader from '@/components/PageHeader';
 import ScanLimitBanner from '@/components/ScanLimitBanner';
+import CameraCapture from '@/components/CameraCapture';
 
 const TIPS = [
   { icon: '☀️', title: 'Natural Lighting', desc: 'Use even, natural light — avoid harsh shadows' },
@@ -23,6 +24,7 @@ export default function NewScan() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
 
   const handleFile = (f: File) => {
     if (!f.type.startsWith('image/')) return;
@@ -93,7 +95,7 @@ export default function NewScan() {
           ))}
         </div>
 
-        {/* Upload Area */}
+        {/* Upload / Camera Area */}
         <div className="fade-in stagger-2">
           {!canScan ? (
             <div className="glass-panel text-center py-16">
@@ -106,26 +108,60 @@ export default function NewScan() {
               <p className="text-micro text-muted-foreground mb-5">Upgrade to Premium for unlimited scans.</p>
               <button onClick={() => navigate('/upgrade')} className="btn-primary">Upgrade to Premium</button>
             </div>
-          ) : !preview ? (
-            <div
-              onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-              onDragLeave={() => setDragOver(false)}
-              onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
-              className="glass-panel flex cursor-pointer flex-col items-center justify-center py-24 transition-all"
-              style={{
-                borderStyle: 'dashed',
-                borderWidth: '2px',
-                borderColor: dragOver ? 'hsl(var(--teal))' : 'hsl(var(--border))',
+          ) : showCamera ? (
+            <CameraCapture
+              onCapture={(capturedFile) => {
+                setShowCamera(false);
+                handleFile(capturedFile);
               }}
-            >
-              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl" style={{ background: 'hsl(var(--teal-light))' }}>
-                <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="hsl(var(--teal))" strokeWidth="1.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                </svg>
+              onClose={() => setShowCamera(false)}
+            />
+          ) : !preview ? (
+            <div>
+              {/* Mode selector */}
+              <div className="mb-4 flex gap-3">
+                <button
+                  onClick={() => setShowCamera(true)}
+                  className="btn-primary flex-1 flex items-center justify-center gap-2"
+                >
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
+                  </svg>
+                  Take Selfie
+                </button>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="btn-secondary flex-1 flex items-center justify-center gap-2"
+                >
+                  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                  </svg>
+                  Upload Photo
+                </button>
               </div>
-              <p className="text-card-title mb-1">Drop your photo here</p>
-              <p className="text-micro text-muted-foreground">or click to browse from your device</p>
+
+              {/* Drop zone */}
+              <div
+                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                className="glass-panel flex cursor-pointer flex-col items-center justify-center py-20 transition-all"
+                style={{
+                  borderStyle: 'dashed',
+                  borderWidth: '2px',
+                  borderColor: dragOver ? 'hsl(var(--teal))' : 'hsl(var(--border))',
+                }}
+              >
+                <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl" style={{ background: 'hsl(var(--teal-light))' }}>
+                  <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="hsl(var(--teal))" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                  </svg>
+                </div>
+                <p className="text-card-title mb-1">Drop your photo here</p>
+                <p className="text-micro text-muted-foreground">or click to browse from your device</p>
+              </div>
               <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
             </div>
           ) : (
