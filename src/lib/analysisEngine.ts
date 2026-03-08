@@ -6,8 +6,9 @@
 // Designed as a drop-in module — replace internals with real AI later.
 // ─────────────────────────────────────────────────────────────
 
+import { alignFace } from './faceAlignmentEngine';
+
 const ANALYSIS_SIZE = 512;
-const FACE_CROP_RATIO = 0.70; // central 70 %
 
 // ── Public interface ────────────────────────────────────────
 
