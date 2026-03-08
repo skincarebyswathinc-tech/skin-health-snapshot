@@ -44,6 +44,74 @@ export type Database = {
         }
         Relationships: []
       }
+      clinic_accounts: {
+        Row: {
+          admin_user_id: string
+          clinic_name: string
+          created_at: string
+          id: string
+          max_patients: number
+          subscription_plan: string
+          updated_at: string
+        }
+        Insert: {
+          admin_user_id: string
+          clinic_name: string
+          created_at?: string
+          id?: string
+          max_patients?: number
+          subscription_plan?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_user_id?: string
+          clinic_name?: string
+          created_at?: string
+          id?: string
+          max_patients?: number
+          subscription_plan?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      clinic_patients: {
+        Row: {
+          added_at: string
+          clinic_id: string
+          id: string
+          notes: string | null
+          patient_email: string
+          patient_name: string
+          patient_user_id: string
+        }
+        Insert: {
+          added_at?: string
+          clinic_id: string
+          id?: string
+          notes?: string | null
+          patient_email: string
+          patient_name: string
+          patient_user_id: string
+        }
+        Update: {
+          added_at?: string
+          clinic_id?: string
+          id?: string
+          notes?: string | null
+          patient_email?: string
+          patient_name?: string
+          patient_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinic_patients_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinic_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lifestyle_logs: {
         Row: {
           created_at: string
@@ -348,7 +416,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_clinic_admin: {
+        Args: { _clinic_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
