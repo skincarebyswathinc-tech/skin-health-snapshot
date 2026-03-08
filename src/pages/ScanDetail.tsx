@@ -11,6 +11,7 @@ import RadarChart from '@/components/RadarChart';
 import ShareCard from '@/components/ShareCard';
 import SkinReport from '@/components/SkinReport';
 import PremiumGate from '@/components/PremiumGate';
+import SkinHeatmap from '@/components/SkinHeatmap';
 
 interface ScanData {
   id: string;
@@ -114,7 +115,19 @@ export default function ScanDetail() {
           </div>
         </div>
 
-        {/* Radar Chart */}
+        {/* Skin Heatmap */}
+        {scan.image_url && (
+          <div className="mb-8 fade-in stagger-3">
+            <SkinHeatmap
+              imageUrl={scan.image_url}
+              inflammationScore={scan.inflammation_score}
+              pigmentationScore={scan.pigmentation_score}
+              hydrationScore={scan.hydration_score}
+            />
+          </div>
+        )}
+
+
         <div className="mb-8 glass-panel fade-in stagger-3">
           <h2 className="text-section-title mb-4">Metric Overview</h2>
           <div className="flex justify-center">
