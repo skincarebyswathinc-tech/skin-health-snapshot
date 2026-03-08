@@ -45,9 +45,13 @@ export async function processScan(
   onStage?.(0, 'Preparing image...');
   const normalizedCanvas = await prepareImage(imageUrl);
 
-  // Stage 2 — Face Region Normalization
-  onStage?.(1, 'Aligning facial region...');
-  const faceCanvas = extractFaceRegion(normalizedCanvas);
+  // Stage 2 — Face Detection & Alignment
+  onStage?.(1, 'Detecting and aligning face...');
+  const alignment = await alignFace(normalizedCanvas);
+  if (!alignment.faceDetected) {
+    console.warn('Face not detected — using center crop fallback');
+  }
+  const faceCanvas = alignment.canvas;
 
   // Stage 3 — Signal Extraction
   onStage?.(2, 'Reading skin signals...');
