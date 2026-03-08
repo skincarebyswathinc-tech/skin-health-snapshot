@@ -12,6 +12,7 @@ import ShareCard from '@/components/ShareCard';
 import SkinReport from '@/components/SkinReport';
 import PremiumGate from '@/components/PremiumGate';
 import SkinHeatmap from '@/components/SkinHeatmap';
+import NutritionPanel from '@/components/NutritionPanel';
 
 interface ScanData {
   id: string;
@@ -143,6 +144,18 @@ export default function ScanDetail() {
               <MetricTile key={m.label} label={m.label} score={m.score} />
             ))}
           </div>
+        </div>
+
+        {/* Nutrition Recommendations */}
+        <div className="mb-8 fade-in stagger-5">
+          <NutritionPanel
+            metrics={{
+              hydrationScore: scan.hydration_score,
+              pigmentationScore: scan.pigmentation_score,
+              inflammationScore: scan.inflammation_score,
+              elasticityScore: scan.elasticity_score,
+            }}
+          />
         </div>
 
         {/* Summary */}
