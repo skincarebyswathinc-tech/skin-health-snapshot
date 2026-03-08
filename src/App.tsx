@@ -52,6 +52,9 @@ const App = () => (
             <Route path="/analytics" element={<ProtectedRoute><AdminAnalytics /></ProtectedRoute>} />
             <Route path="/routine" element={<ProtectedRoute><SkincareRoutine /></ProtectedRoute>} />
             <Route path="/install" element={<Install />} />
+            <Route path="/clinic/register" element={<ClinicRegister />} />
+            <Route path="/clinic" element={<ProtectedRoute><ClinicDashboard /></ProtectedRoute>} />
+            <Route path="/clinic/billing" element={<ProtectedRoute><ClinicBilling /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
