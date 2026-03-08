@@ -21,6 +21,9 @@ import Referrals from "./pages/Referrals";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import SkincareRoutine from "./pages/SkincareRoutine";
 import Install from "./pages/Install";
+import ClinicRegister from "./pages/ClinicRegister";
+import ClinicDashboard from "./pages/ClinicDashboard";
+import ClinicBilling from "./pages/ClinicBilling";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
