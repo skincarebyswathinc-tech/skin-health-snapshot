@@ -109,18 +109,22 @@ export default function Dashboard() {
           <div className="glass-card fade-in stagger-3">
             <p className="text-card-title mb-4">Quick Access</p>
             <div className="space-y-2">
+              <button onClick={() => navigate('/journal')} className="flex w-full items-center gap-3 rounded-xl p-3 text-sm transition-colors hover:bg-muted">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'hsl(var(--teal-light))' }}>📝</span>
+                <span>Daily Journal</span>
+              </button>
+              <button onClick={() => navigate('/progress')} className="flex w-full items-center gap-3 rounded-xl p-3 text-sm transition-colors hover:bg-muted">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'hsl(var(--lavender-light))' }}>📈</span>
+                <span>Skin Progress</span>
+              </button>
               <button onClick={() => navigate('/history')} className="flex w-full items-center gap-3 rounded-xl p-3 text-sm transition-colors hover:bg-muted">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'hsl(var(--lavender-light))' }}>📊</span>
                 <span>Scan History</span>
               </button>
               <button onClick={() => navigate('/settings')} className="flex w-full items-center gap-3 rounded-xl p-3 text-sm transition-colors hover:bg-muted">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'hsl(var(--teal-light))' }}>⚙️</span>
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'hsl(var(--muted))' }}>⚙️</span>
                 <span>Settings</span>
               </button>
-            </div>
-            <div className="mt-4 rounded-2xl p-4" style={{ background: 'hsl(var(--lavender-light))' }}>
-              <p className="text-micro font-semibold" style={{ color: 'hsl(var(--accent-foreground))' }}>Progress Tracking</p>
-              <p className="text-micro text-muted-foreground">Coming soon — track trends over time</p>
             </div>
           </div>
         </div>
@@ -151,10 +155,18 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Insights Placeholder */}
+        {/* Insights */}
         <div className="mt-10 glass-panel fade-in stagger-5">
           <h2 className="text-section-title mb-2">Personalized Insights</h2>
-          <p className="text-body text-muted-foreground">Complete your first scan to receive personalized wellness recommendations and track your skin health journey.</p>
+          <p className="text-body text-muted-foreground">
+            {recentScans.length > 0
+              ? 'Log your daily habits in the Journal and track your progress over time.'
+              : 'Complete your first scan to receive personalized wellness recommendations and track your skin health journey.'}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <button onClick={() => navigate('/journal')} className="btn-secondary text-sm">Log Today's Habits</button>
+            <button onClick={() => navigate('/progress')} className="btn-ghost text-sm">View Progress →</button>
+          </div>
         </div>
       </div>
     </AppLayout>

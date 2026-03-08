@@ -44,6 +44,54 @@ export type Database = {
         }
         Relationships: []
       }
+      lifestyle_logs: {
+        Row: {
+          created_at: string
+          dairy_intake_level: string | null
+          date: string
+          diet_quality: number | null
+          exercise_minutes: number | null
+          id: string
+          notes: string | null
+          sleep_hours: number | null
+          stress_level: number | null
+          sugar_intake_level: string | null
+          updated_at: string
+          user_id: string
+          water_intake_liters: number | null
+        }
+        Insert: {
+          created_at?: string
+          dairy_intake_level?: string | null
+          date?: string
+          diet_quality?: number | null
+          exercise_minutes?: number | null
+          id?: string
+          notes?: string | null
+          sleep_hours?: number | null
+          stress_level?: number | null
+          sugar_intake_level?: string | null
+          updated_at?: string
+          user_id: string
+          water_intake_liters?: number | null
+        }
+        Update: {
+          created_at?: string
+          dairy_intake_level?: string | null
+          date?: string
+          diet_quality?: number | null
+          exercise_minutes?: number | null
+          id?: string
+          notes?: string | null
+          sleep_hours?: number | null
+          stress_level?: number | null
+          sugar_intake_level?: string | null
+          updated_at?: string
+          user_id?: string
+          water_intake_liters?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age_range: string | null
@@ -130,6 +178,56 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      skin_progress_metrics: {
+        Row: {
+          created_at: string
+          date: string
+          elasticity_score: number | null
+          hydration_score: number | null
+          id: string
+          inflammation_score: number | null
+          pigmentation_score: number | null
+          scan_id: string | null
+          skin_score: number | null
+          texture_score: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          elasticity_score?: number | null
+          hydration_score?: number | null
+          id?: string
+          inflammation_score?: number | null
+          pigmentation_score?: number | null
+          scan_id?: string | null
+          skin_score?: number | null
+          texture_score?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          elasticity_score?: number | null
+          hydration_score?: number | null
+          id?: string
+          inflammation_score?: number | null
+          pigmentation_score?: number | null
+          scan_id?: string | null
+          skin_score?: number | null
+          texture_score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "skin_progress_metrics_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "scans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
