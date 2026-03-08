@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
-import { analyzeSkin } from '@/lib/analysisEngine';
+import { processScan } from '@/lib/analysisEngine';
 
 const STAGES = [
-  { label: 'Preparing image...', icon: '🖼️', duration: 1200 },
-  { label: 'Aligning facial region...', icon: '📐', duration: 1500 },
-  { label: 'Reading skin signals...', icon: '🔬', duration: 2000 },
-  { label: 'Generating skin metrics...', icon: '📊', duration: 1500 },
-  { label: 'Preparing your dashboard...', icon: '✨', duration: 1000 },
+  { label: 'Preparing image...', icon: '🖼️' },
+  { label: 'Aligning facial region...', icon: '📐' },
+  { label: 'Reading skin signals...', icon: '🔬' },
+  { label: 'Generating skin metrics...', icon: '📊' },
+  { label: 'Preparing your dashboard...', icon: '✨' },
 ];
 
 export default function AnalysisLoading() {
@@ -17,27 +17,44 @@ export default function AnalysisLoading() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [stageIndex, setStageIndex] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!scanId || !user) return;
-    let timeout: ReturnType<typeof setTimeout>;
-    let currentStage = 0;
+    let cancelled = false;
 
-    const advanceStage = () => {
-      currentStage++;
-      if (currentStage < STAGES.length) {
-        setStageIndex(currentStage);
-        timeout = setTimeout(advanceStage, STAGES[currentStage].duration);
-      } else {
-        runAnalysis();
-      }
-    };
-
-    const runAnalysis = async () => {
+    const run = async () => {
       try {
-        const { data: scan } = await supabase.from('scans').select('image_url').eq('id', scanId).single();
-        if (!scan) return;
-        const result = analyzeSkin(scan.image_url || scanId, user.id);
+        // Fetch image URL
+        const { data: scan } = await supabase
+          .from('scans')
+          .select('image_url')
+          .eq('id', scanId)
+          .single();
+
+        if (!scan?.image_url || cancelled) return;
+
+        // Fetch user profile for age
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('age_range')
+          .eq('user_id', user.id)
+          .single();
+
+        const userAge = parseAgeRange(profile?.age_range);
+
+        // Run canvas-based analysis with stage callbacks
+        const result = await processScan(
+          scan.image_url,
+          userAge,
+          (stage) => {
+            if (!cancelled) setStageIndex(stage);
+          },
+        );
+
+        if (cancelled) return;
+
+        // Persist results
         await supabase.from('scans').update({
           overall_score: result.overallScore,
           skin_age_estimate: result.skinAgeEstimate,
@@ -49,15 +66,17 @@ export default function AnalysisLoading() {
           summary_text: result.summaryText,
           status: 'complete',
         }).eq('id', scanId);
+
         navigate(`/scan/${scanId}`, { replace: true });
       } catch (err) {
-        console.error(err);
-        navigate('/dashboard');
+        console.error('Analysis error:', err);
+        if (!cancelled) setError('Analysis could not be completed. Redirecting...');
+        setTimeout(() => { if (!cancelled) navigate('/dashboard'); }, 2000);
       }
     };
 
-    timeout = setTimeout(advanceStage, STAGES[0].duration);
-    return () => clearTimeout(timeout);
+    run();
+    return () => { cancelled = true; };
   }, [scanId, user, navigate]);
 
   const progress = ((stageIndex + 1) / STAGES.length) * 100;
@@ -91,7 +110,9 @@ export default function AnalysisLoading() {
         </div>
 
         <p className="text-card-title mb-2 fade-in" key={stageIndex}>{STAGES[stageIndex].label}</p>
-        <p className="text-micro text-muted-foreground">Analyzing your skin wellness snapshot</p>
+        <p className="text-micro text-muted-foreground">
+          {error || 'Analyzing your skin wellness snapshot'}
+        </p>
 
         {/* Step indicators */}
         <div className="mx-auto mt-10 flex max-w-xs gap-2">
@@ -108,4 +129,16 @@ export default function AnalysisLoading() {
       </div>
     </div>
   );
+}
+
+function parseAgeRange(ageRange?: string | null): number {
+  if (!ageRange) return 30;
+  const match = ageRange.match(/(\d+)/);
+  if (!match) return 30;
+  const low = parseInt(match[1], 10);
+  // Return midpoint of range
+  if (ageRange.includes('+')) return low + 5;
+  const match2 = ageRange.match(/(\d+)\s*-\s*(\d+)/);
+  if (match2) return Math.round((parseInt(match2[1]) + parseInt(match2[2])) / 2);
+  return low;
 }
