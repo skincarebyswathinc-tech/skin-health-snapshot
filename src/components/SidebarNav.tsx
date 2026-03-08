@@ -168,12 +168,10 @@ export default function SidebarNav({ onSignOut }: SidebarNavProps) {
           <button
             key={item.label}
             onClick={() => handleNav(item.href)}
-            className={`sidebar-link w-full text-left ${isActive(item.href) ? 'active' : ''} ${item.href === '#' ? 'opacity-40 cursor-default' : ''}`}
-            disabled={item.href === '#'}
+            className={`sidebar-link w-full text-left ${isActive(item.href) ? 'active' : ''}`}
           >
             {item.icon}
             <span>{item.label}</span>
-            {item.href === '#' && <span className="ml-auto text-micro rounded-full px-2 py-0.5" style={{ background: 'hsl(var(--muted))' }}>Soon</span>}
           </button>
         ))}
       </nav>
