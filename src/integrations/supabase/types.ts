@@ -14,7 +14,123 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          onboarding_complete: boolean | null
+          reminder_pref: string | null
+          theme_pref: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          onboarding_complete?: boolean | null
+          reminder_pref?: string | null
+          theme_pref?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          onboarding_complete?: boolean | null
+          reminder_pref?: string | null
+          theme_pref?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          age_range: string | null
+          consent_accepted: boolean | null
+          created_at: string
+          first_name: string | null
+          goals: string[] | null
+          id: string
+          skin_concerns: string[] | null
+          skin_type: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age_range?: string | null
+          consent_accepted?: boolean | null
+          created_at?: string
+          first_name?: string | null
+          goals?: string[] | null
+          id?: string
+          skin_concerns?: string[] | null
+          skin_type?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age_range?: string | null
+          consent_accepted?: boolean | null
+          created_at?: string
+          first_name?: string | null
+          goals?: string[] | null
+          id?: string
+          skin_concerns?: string[] | null
+          skin_type?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      scans: {
+        Row: {
+          created_at: string
+          elasticity_score: number | null
+          hydration_score: number | null
+          id: string
+          image_url: string | null
+          inflammation_score: number | null
+          overall_score: number | null
+          pigmentation_score: number | null
+          skin_age_estimate: number | null
+          status: string
+          summary_text: string | null
+          texture_score: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          elasticity_score?: number | null
+          hydration_score?: number | null
+          id?: string
+          image_url?: string | null
+          inflammation_score?: number | null
+          overall_score?: number | null
+          pigmentation_score?: number | null
+          skin_age_estimate?: number | null
+          status?: string
+          summary_text?: string | null
+          texture_score?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          elasticity_score?: number | null
+          hydration_score?: number | null
+          id?: string
+          image_url?: string | null
+          inflammation_score?: number | null
+          overall_score?: number | null
+          pigmentation_score?: number | null
+          skin_age_estimate?: number | null
+          status?: string
+          summary_text?: string | null
+          texture_score?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
