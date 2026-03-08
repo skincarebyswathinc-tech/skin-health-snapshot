@@ -72,20 +72,11 @@ export default function ClinicDashboard() {
     setAddError('');
     setAdding(true);
     try {
-      // Look up user by email — we'll store a placeholder UUID if not found yet
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('user_id')
-        .eq('user_id', (await supabase.rpc('', {})).data) // We can't look up by email via profiles
-        .limit(1);
-
-      // For linked users, we store the email and a nil UUID initially
-      // The patient_user_id will be updated when they accept the invite
       const { error } = await supabase.from('clinic_patients').insert({
         clinic_id: clinic.id,
         patient_name: newName,
         patient_email: newEmail,
-        patient_user_id: '00000000-0000-0000-0000-000000000000', // placeholder until linked
+        patient_user_id: '00000000-0000-0000-0000-000000000000',
         notes: null,
       });
       if (error) throw error;
