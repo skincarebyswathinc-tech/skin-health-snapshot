@@ -13,6 +13,8 @@ import NewScan from "./pages/NewScan";
 import AnalysisLoading from "./pages/AnalysisLoading";
 import ScanDetail from "./pages/ScanDetail";
 import ScanHistory from "./pages/ScanHistory";
+import Journal from "./pages/Journal";
+import Progress from "./pages/Progress";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
