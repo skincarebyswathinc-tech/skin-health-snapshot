@@ -67,6 +67,19 @@ export default function AnalysisLoading() {
           status: 'complete',
         }).eq('id', scanId);
 
+        // Also insert into progress tracking table
+        await supabase.from('skin_progress_metrics').insert({
+          user_id: user.id,
+          scan_id: scanId,
+          date: new Date().toISOString().split('T')[0],
+          skin_score: result.overallScore,
+          hydration_score: result.hydrationScore,
+          texture_score: result.textureScore,
+          pigmentation_score: result.pigmentationScore,
+          inflammation_score: result.inflammationScore,
+          elasticity_score: result.elasticityScore,
+        });
+
         navigate(`/scan/${scanId}`, { replace: true });
       } catch (err) {
         console.error('Analysis error:', err);
