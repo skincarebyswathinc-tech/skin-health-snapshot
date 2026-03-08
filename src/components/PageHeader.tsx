@@ -6,8 +6,8 @@ interface PageHeaderProps {
 export default function PageHeader({ title, subtitle }: PageHeaderProps) {
   return (
     <div className="section-header fade-in">
-      <h1 className="text-3xl font-light tracking-tight sm:text-4xl">{title}</h1>
-      {subtitle && <p className="mt-2 text-muted-foreground">{subtitle}</p>}
+      <h1 className="text-page-title">{title}</h1>
+      {subtitle && <p className="mt-1.5 text-body text-muted-foreground">{subtitle}</p>}
     </div>
   );
 }
