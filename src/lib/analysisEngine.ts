@@ -138,19 +138,7 @@ function normalizeBrightness(ctx: CanvasRenderingContext2D, w: number, h: number
   ctx.putImageData(imageData, 0, 0);
 }
 
-// ── Stage 2: Face Region Normalization ──────────────────────
-
-function extractFaceRegion(source: HTMLCanvasElement): HTMLCanvasElement {
-  const cropSize = Math.round(ANALYSIS_SIZE * FACE_CROP_RATIO);
-  const offset = Math.round((ANALYSIS_SIZE - cropSize) / 2);
-
-  const canvas = document.createElement('canvas');
-  canvas.width = cropSize;
-  canvas.height = cropSize;
-  const ctx = canvas.getContext('2d')!;
-  ctx.drawImage(source, offset, offset, cropSize, cropSize, 0, 0, cropSize, cropSize);
-  return canvas;
-}
+// ── Stage 2: Face Alignment (now handled by faceAlignmentEngine.ts) ──
 
 // ── Stage 3: Visual Signal Extraction ───────────────────────
 
