@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
+import { useSubscription } from '@/hooks/useSubscription';
 import AppLayout from '@/components/AppLayout';
 import PageHeader from '@/components/PageHeader';
 
