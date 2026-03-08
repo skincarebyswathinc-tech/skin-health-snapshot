@@ -6,6 +6,7 @@ import { useSubscription, incrementScanCount, trackEvent } from '@/hooks/useSubs
 import AppLayout from '@/components/AppLayout';
 import PageHeader from '@/components/PageHeader';
 import ScanLimitBanner from '@/components/ScanLimitBanner';
+import CameraCapture from '@/components/CameraCapture';
 
 const TIPS = [
   { icon: '☀️', title: 'Natural Lighting', desc: 'Use even, natural light — avoid harsh shadows' },
@@ -23,6 +24,7 @@ export default function NewScan() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
 
   const handleFile = (f: File) => {
     if (!f.type.startsWith('image/')) return;
