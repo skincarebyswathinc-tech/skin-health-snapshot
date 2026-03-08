@@ -25,8 +25,8 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="mx-auto max-w-4xl px-6 py-20 text-center sm:py-32">
+      <section className="relative mx-auto max-w-4xl px-6 py-20 text-center sm:py-32">
+        <img src={heroBg} alt="" className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30" aria-hidden="true" />
         <div className="fade-in">
           <span className="mb-4 inline-block rounded-full px-4 py-1.5 text-xs font-medium" style={{ background: 'hsl(var(--teal-light))', color: 'hsl(var(--teal))' }}>
             Your Skin, Understood
