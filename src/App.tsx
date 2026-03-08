@@ -16,6 +16,9 @@ import ScanHistory from "./pages/ScanHistory";
 import Journal from "./pages/Journal";
 import Progress from "./pages/Progress";
 import Settings from "./pages/Settings";
+import Upgrade from "./pages/Upgrade";
+import Referrals from "./pages/Referrals";
+import AdminAnalytics from "./pages/AdminAnalytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +42,9 @@ const App = () => (
             <Route path="/journal" element={<ProtectedRoute><Journal /></ProtectedRoute>} />
             <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+            <Route path="/upgrade" element={<ProtectedRoute><Upgrade /></ProtectedRoute>} />
+            <Route path="/referrals" element={<ProtectedRoute><Referrals /></ProtectedRoute>} />
+            <Route path="/analytics" element={<ProtectedRoute><AdminAnalytics /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

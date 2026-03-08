@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
+import { useSubscription } from '@/hooks/useSubscription';
 import AppLayout from '@/components/AppLayout';
 import ProgressLineChart from '@/components/ProgressLineChart';
 import MetricSparkline from '@/components/MetricSparkline';
@@ -8,6 +9,7 @@ import HabitInsightCard from '@/components/HabitInsightCard';
 import WeeklySummaryCard from '@/components/WeeklySummaryCard';
 import BadgeCard from '@/components/BadgeCard';
 import EmptyState from '@/components/EmptyState';
+import PremiumGate from '@/components/PremiumGate';
 import {
   generateProgressSummary,
   type LifestyleLog,
@@ -17,6 +19,7 @@ import {
 
 export default function Progress() {
   const { user, signOut } = useAuth();
+  const { isPremium } = useSubscription();
   const [progress, setProgress] = useState<SkinProgressEntry[]>([]);
   const [logs, setLogs] = useState<LifestyleLog[]>([]);
   const [summary, setSummary] = useState<ProgressSummary | null>(null);
@@ -156,16 +159,18 @@ export default function Progress() {
           </div>
         )}
 
-        {/* Metric Sparklines */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-8 fade-in stagger-3">
-          {metricKeys.map(({ key, label, color }) => {
-            const values = progress.map(p => p[key]).filter((v): v is number => v != null);
-            const current = values.length > 0 ? values[values.length - 1] : 0;
-            return (
-              <MetricSparkline key={key} values={values} label={label} currentValue={current} color={color} />
-            );
-          })}
-        </div>
+        {/* Metric Sparklines — full analytics premium gated */}
+        <PremiumGate isPremium={isPremium} message="Upgrade to Premium to unlock full progress analytics">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-8 fade-in stagger-3">
+            {metricKeys.map(({ key, label, color }) => {
+              const values = progress.map(p => p[key]).filter((v): v is number => v != null);
+              const current = values.length > 0 ? values[values.length - 1] : 0;
+              return (
+                <MetricSparkline key={key} values={values} label={label} currentValue={current} color={color} />
+              );
+            })}
+          </div>
+        </PremiumGate>
 
         {/* Badges */}
         {summary && summary.badges.some(b => b.earned) && (
@@ -181,19 +186,21 @@ export default function Progress() {
           </div>
         )}
 
-        {/* Habit Correlations */}
+        {/* Habit Correlations — premium gated */}
         {summary && summary.correlations.length > 0 && (
-          <div className="fade-in stagger-5">
-            <h2 className="text-section-title mb-4">Habit Correlations</h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {summary.correlations.map((c, i) => (
-                <HabitInsightCard key={i} insight={c} />
-              ))}
+          <PremiumGate isPremium={isPremium} message="Upgrade to Premium to see habit correlations">
+            <div className="fade-in stagger-5">
+              <h2 className="text-section-title mb-4">Habit Correlations</h2>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {summary.correlations.map((c, i) => (
+                  <HabitInsightCard key={i} insight={c} />
+                ))}
+              </div>
+              <p className="text-micro text-muted-foreground mt-4">
+                Insights are observational correlations and not medical conclusions.
+              </p>
             </div>
-            <p className="text-micro text-muted-foreground mt-4">
-              Insights are observational correlations and not medical conclusions.
-            </p>
-          </div>
+          </PremiumGate>
         )}
 
         {/* Improvements */}

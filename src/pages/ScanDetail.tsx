@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
+import { useSubscription, trackEvent } from '@/hooks/useSubscription';
 import AppLayout from '@/components/AppLayout';
 import PageHeader from '@/components/PageHeader';
 import ScoreRing from '@/components/ScoreRing';
 import MetricTile from '@/components/MetricTile';
 import RadarChart from '@/components/RadarChart';
+import ShareCard from '@/components/ShareCard';
+import SkinReport from '@/components/SkinReport';
+import PremiumGate from '@/components/PremiumGate';
 
 interface ScanData {
   id: string;
@@ -34,17 +38,22 @@ export default function ScanDetail() {
   const { scanId } = useParams();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { isPremium } = useSubscription();
   const [scan, setScan] = useState<ScanData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     if (!scanId || !user) return;
-    supabase.from('scans').select('*').eq('id', scanId).eq('user_id', user.id).single()
-      .then(({ data }) => {
-        if (data && data.status === 'complete') setScan(data as ScanData);
-        else if (data && data.status === 'analyzing') navigate(`/scan/analyzing/${scanId}`, { replace: true });
-        setLoading(false);
-      });
+    Promise.all([
+      supabase.from('scans').select('*').eq('id', scanId).eq('user_id', user.id).single(),
+      supabase.from('profiles').select('first_name').eq('user_id', user.id).single(),
+    ]).then(([{ data }, { data: profile }]) => {
+      if (data && data.status === 'complete') setScan(data as ScanData);
+      else if (data && data.status === 'analyzing') navigate(`/scan/analyzing/${scanId}`, { replace: true });
+      setUserName(profile?.first_name || 'User');
+      setLoading(false);
+    });
   }, [scanId, user, navigate]);
 
   if (loading) return <div className="flex min-h-screen items-center justify-center"><div className="h-8 w-8 spin-slow rounded-full border-2 border-muted border-t-primary" /></div>;
@@ -58,10 +67,19 @@ export default function ScanDetail() {
     { label: 'Elasticity', score: scan.elasticity_score },
   ];
 
+  const dateStr = new Date(scan.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
   return (
     <AppLayout onSignOut={signOut}>
       <div className="page-container">
-        <PageHeader title="Scan Results" subtitle={new Date(scan.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} />
+        <PageHeader title="Scan Results" subtitle={dateStr} />
+
+        {/* Premium badge */}
+        {isPremium && (
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-micro font-medium" style={{ background: 'hsl(var(--teal-light))', color: 'hsl(var(--teal))' }}>
+            👑 Premium Member
+          </div>
+        )}
 
         {/* Top Section: Score + Skin Age + Image */}
         <div className="mb-8 grid gap-6 lg:grid-cols-3">
@@ -74,7 +92,6 @@ export default function ScanDetail() {
           </div>
 
           <div className="flex flex-col gap-6 lg:col-span-2 fade-in stagger-2">
-            {/* Skin Age */}
             <div className="glass-card flex items-center gap-5">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl" style={{ background: 'hsl(var(--lavender-light))' }}>
                 <span className="text-xl">🧬</span>
@@ -85,7 +102,6 @@ export default function ScanDetail() {
               </div>
             </div>
 
-            {/* Image preview */}
             {scan.image_url && (
               <div className="glass-card overflow-hidden">
                 <div className="mb-3 flex items-center gap-2">
@@ -120,6 +136,24 @@ export default function ScanDetail() {
         <div className="mb-8 glass-panel fade-in stagger-5">
           <h2 className="text-section-title mb-3">Summary Insights</h2>
           <p className="text-body text-muted-foreground leading-relaxed">{scan.summary_text}</p>
+        </div>
+
+        {/* Report Download — premium gated */}
+        <div className="mb-8 fade-in stagger-5">
+          <PremiumGate isPremium={isPremium} message="Upgrade to Premium to download skin reports">
+            <div className="glass-card flex items-center justify-between">
+              <div>
+                <p className="text-card-title">Skin Report</p>
+                <p className="text-micro text-muted-foreground">Download a detailed PDF of your results</p>
+              </div>
+              <SkinReport scan={scan} userName={userName} />
+            </div>
+          </PremiumGate>
+        </div>
+
+        {/* Share Card */}
+        <div className="mb-8 fade-in stagger-6">
+          <ShareCard score={scan.overall_score} skinAge={scan.skin_age_estimate} date={dateStr} />
         </div>
 
         {/* Disclaimer */}
