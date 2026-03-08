@@ -19,6 +19,7 @@ import Settings from "./pages/Settings";
 import Upgrade from "./pages/Upgrade";
 import Referrals from "./pages/Referrals";
 import AdminAnalytics from "./pages/AdminAnalytics";
+import SkincareRoutine from "./pages/SkincareRoutine";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
