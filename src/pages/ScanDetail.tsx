@@ -6,6 +6,7 @@ import AppLayout from '@/components/AppLayout';
 import PageHeader from '@/components/PageHeader';
 import ScoreRing from '@/components/ScoreRing';
 import MetricTile from '@/components/MetricTile';
+import RadarChart from '@/components/RadarChart';
 
 interface ScanData {
   id: string;
@@ -20,6 +21,13 @@ interface ScanData {
   elasticity_score: number;
   summary_text: string;
   status: string;
+}
+
+function getSummaryLabel(score: number): string {
+  if (score >= 85) return 'Excellent skin health';
+  if (score >= 70) return 'Healthy with mild signals';
+  if (score >= 55) return 'Moderate — room for improvement';
+  return 'Needs focused attention';
 }
 
 export default function ScanDetail() {
@@ -39,7 +47,7 @@ export default function ScanDetail() {
       });
   }, [scanId, user, navigate]);
 
-  if (loading) return <div className="flex min-h-screen items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-2 border-muted border-t-primary" /></div>;
+  if (loading) return <div className="flex min-h-screen items-center justify-center"><div className="h-8 w-8 spin-slow rounded-full border-2 border-muted border-t-primary" /></div>;
   if (!scan) return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Scan not found</div>;
 
   const metrics = [
@@ -55,41 +63,53 @@ export default function ScanDetail() {
       <div className="page-container">
         <PageHeader title="Scan Results" subtitle={new Date(scan.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} />
 
-        {/* Overall Score */}
-        <div className="mb-8 grid gap-6 sm:grid-cols-3">
-          <div className="glass-card flex flex-col items-center gap-4 py-8 sm:col-span-1 fade-in stagger-1">
-            <ScoreRing score={scan.overall_score} size={160} strokeWidth={10} />
+        {/* Top Section: Score + Skin Age + Image */}
+        <div className="mb-8 grid gap-6 lg:grid-cols-3">
+          <div className="glass-panel flex flex-col items-center gap-4 py-8 fade-in stagger-1">
+            <ScoreRing score={scan.overall_score} size={180} strokeWidth={12} />
             <div className="text-center">
-              <p className="text-lg font-medium">Overall Score</p>
-              <p className="text-xs text-muted-foreground">Skin wellness snapshot</p>
+              <p className="text-card-title">Skin Health Score</p>
+              <p className="text-micro text-muted-foreground mt-1">{getSummaryLabel(scan.overall_score)}</p>
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 sm:col-span-2 fade-in stagger-2">
+          <div className="flex flex-col gap-6 lg:col-span-2 fade-in stagger-2">
             {/* Skin Age */}
-            <div className="glass-card flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl" style={{ background: 'hsl(var(--lavender-light))' }}>
-                <span className="text-lg">🧬</span>
+            <div className="glass-card flex items-center gap-5">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl" style={{ background: 'hsl(var(--lavender-light))' }}>
+                <span className="text-xl">🧬</span>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Estimated Skin Age</p>
-                <p className="text-2xl font-light">{scan.skin_age_estimate} <span className="text-sm text-muted-foreground">years</span></p>
+                <p className="text-micro text-muted-foreground">Estimated Skin Age</p>
+                <p className="text-[28px] font-semibold leading-none">{scan.skin_age_estimate} <span className="text-sm font-normal text-muted-foreground">years</span></p>
               </div>
             </div>
 
             {/* Image preview */}
             {scan.image_url && (
               <div className="glass-card overflow-hidden">
-                <img src={scan.image_url} alt="Scan" className="mx-auto max-h-48 rounded-lg object-contain" />
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="text-micro font-medium text-muted-foreground uppercase tracking-wider">Scan Preview</span>
+                  <span className="text-micro text-muted-foreground">· {new Date(scan.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                </div>
+                <img src={scan.image_url} alt="Skin scan" className="mx-auto max-h-48 rounded-xl object-contain" />
               </div>
             )}
           </div>
         </div>
 
-        {/* Metrics */}
-        <div className="mb-8 fade-in stagger-3">
-          <h2 className="mb-4 text-xl font-light">Metric Breakdown</h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Radar Chart */}
+        <div className="mb-8 glass-panel fade-in stagger-3">
+          <h2 className="text-section-title mb-4">Metric Overview</h2>
+          <div className="flex justify-center">
+            <RadarChart metrics={metrics} size={280} />
+          </div>
+        </div>
+
+        {/* Metric Cards */}
+        <div className="mb-8 fade-in stagger-4">
+          <h2 className="text-section-title mb-5">Metric Breakdown</h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {metrics.map(m => (
               <MetricTile key={m.label} label={m.label} score={m.score} />
             ))}
@@ -97,20 +117,20 @@ export default function ScanDetail() {
         </div>
 
         {/* Summary */}
-        <div className="mb-8 glass-card fade-in stagger-4">
-          <h2 className="mb-3 text-lg font-light">Summary Insights</h2>
-          <p className="text-sm leading-relaxed text-muted-foreground">{scan.summary_text}</p>
+        <div className="mb-8 glass-panel fade-in stagger-5">
+          <h2 className="text-section-title mb-3">Summary Insights</h2>
+          <p className="text-body text-muted-foreground leading-relaxed">{scan.summary_text}</p>
         </div>
 
         {/* Disclaimer */}
-        <div className="mb-8 rounded-xl p-4 text-center" style={{ background: 'hsl(var(--lavender-light))' }}>
-          <p className="text-xs text-muted-foreground">
+        <div className="mb-8 rounded-2xl p-5 text-center" style={{ background: 'hsl(var(--lavender-light))' }}>
+          <p className="text-micro text-muted-foreground">
             ℹ️ These results are general wellness insights. They are not a medical diagnosis. Please consult a dermatologist for professional advice.
           </p>
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3 fade-in stagger-5">
+        <div className="flex gap-4 fade-in stagger-6">
           <button onClick={() => navigate('/dashboard')} className="btn-secondary flex-1">Back to Dashboard</button>
           <button onClick={() => navigate('/scan/new')} className="btn-primary flex-1">New Scan</button>
         </div>

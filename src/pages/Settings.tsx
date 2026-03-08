@@ -53,27 +53,27 @@ export default function Settings() {
 
   return (
     <AppLayout onSignOut={signOut}>
-      <div className="page-container">
+      <div className="page-container max-w-2xl">
         <PageHeader title="Settings" subtitle="Manage your profile and preferences" />
 
         {/* Profile */}
         <div className="mb-6 glass-card fade-in stagger-1">
-          <h2 className="mb-4 text-lg font-light">Profile</h2>
-          <div className="space-y-4">
+          <h2 className="text-section-title mb-5">Profile</h2>
+          <div className="space-y-5">
             <div>
-              <label className="mb-1 block text-xs font-medium text-muted-foreground">First Name</label>
+              <label className="mb-1.5 block text-micro font-medium text-muted-foreground">First Name</label>
               <input value={firstName} onChange={(e) => setFirstName(e.target.value)} className="input-field" maxLength={50} />
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-5 sm:grid-cols-2">
               <div>
-                <label className="mb-1 block text-xs font-medium text-muted-foreground">Age Range</label>
+                <label className="mb-1.5 block text-micro font-medium text-muted-foreground">Age Range</label>
                 <select value={ageRange} onChange={(e) => setAgeRange(e.target.value)} className="input-field">
                   <option value="">Select</option>
                   {['18-24', '25-34', '35-44', '45-54', '55+'].map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-muted-foreground">Skin Type</label>
+                <label className="mb-1.5 block text-micro font-medium text-muted-foreground">Skin Type</label>
                 <select value={skinType} onChange={(e) => setSkinType(e.target.value)} className="input-field">
                   <option value="">Select</option>
                   {['Dry', 'Oily', 'Combination', 'Normal', 'Sensitive'].map(t => <option key={t} value={t}>{t}</option>)}
@@ -82,7 +82,7 @@ export default function Settings() {
             </div>
             <div className="flex items-center gap-3">
               <button onClick={handleSave} disabled={saving} className="btn-primary disabled:opacity-50">{saving ? 'Saving...' : 'Save Changes'}</button>
-              {saved && <span className="text-sm" style={{ color: 'hsl(var(--teal))' }}>✓ Saved</span>}
+              {saved && <span className="text-micro font-medium" style={{ color: 'hsl(var(--teal))' }}>✓ Saved</span>}
             </div>
           </div>
         </div>
@@ -90,10 +90,10 @@ export default function Settings() {
         {/* Goals */}
         {profile?.goals && profile.goals.length > 0 && (
           <div className="mb-6 glass-card fade-in stagger-2">
-            <h2 className="mb-3 text-lg font-light">Your Goals</h2>
+            <h2 className="text-section-title mb-4">Your Goals</h2>
             <div className="flex flex-wrap gap-2">
               {profile.goals.map(g => (
-                <span key={g} className="rounded-full border border-border px-3 py-1 text-xs">{g}</span>
+                <span key={g} className="rounded-full border border-border px-4 py-1.5 text-micro font-medium">{g}</span>
               ))}
             </div>
           </div>
@@ -102,10 +102,10 @@ export default function Settings() {
         {/* Concerns */}
         {profile?.skin_concerns && profile.skin_concerns.length > 0 && (
           <div className="mb-6 glass-card fade-in stagger-3">
-            <h2 className="mb-3 text-lg font-light">Skin Concerns</h2>
+            <h2 className="text-section-title mb-4">Skin Concerns</h2>
             <div className="flex flex-wrap gap-2">
               {profile.skin_concerns.map(c => (
-                <span key={c} className="rounded-full border border-border px-3 py-1 text-xs">{c}</span>
+                <span key={c} className="rounded-full border border-border px-4 py-1.5 text-micro font-medium">{c}</span>
               ))}
             </div>
           </div>
@@ -113,14 +113,14 @@ export default function Settings() {
 
         {/* Preferences */}
         <div className="mb-6 glass-card fade-in stagger-4">
-          <h2 className="mb-3 text-lg font-light">Preferences</h2>
+          <h2 className="text-section-title mb-4">Preferences</h2>
           <div className="space-y-3">
-            <div className="flex items-center justify-between rounded-xl border border-border p-4">
+            <div className="flex items-center justify-between rounded-2xl border border-border p-5">
               <div>
-                <p className="text-sm font-medium">Reminders</p>
-                <p className="text-xs text-muted-foreground">Scan reminders — coming soon</p>
+                <p className="text-card-title">Reminders</p>
+                <p className="text-micro text-muted-foreground">Scan reminders — coming soon</p>
               </div>
-              <span className="rounded-full px-3 py-1 text-xs" style={{ background: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}>
+              <span className="rounded-full px-3 py-1 text-micro font-medium" style={{ background: 'hsl(var(--muted))' }}>
                 {prefs?.reminder_pref || 'Weekly'}
               </span>
             </div>
@@ -129,19 +129,19 @@ export default function Settings() {
 
         {/* Account */}
         <div className="mb-6 glass-card fade-in stagger-5">
-          <h2 className="mb-3 text-lg font-light">Account</h2>
+          <h2 className="text-section-title mb-4">Account</h2>
           <div className="space-y-3">
-            <div className="flex items-center justify-between rounded-xl border border-border p-4">
+            <div className="flex items-center justify-between rounded-2xl border border-border p-5">
               <div>
-                <p className="text-sm font-medium">Subscription</p>
-                <p className="text-xs text-muted-foreground">Free plan — upgrade coming soon</p>
+                <p className="text-card-title">Subscription</p>
+                <p className="text-micro text-muted-foreground">Free plan — upgrade coming soon</p>
               </div>
-              <span className="rounded-full px-3 py-1 text-xs" style={{ background: 'hsl(var(--teal-light))', color: 'hsl(var(--teal))' }}>Free</span>
+              <span className="rounded-full px-3 py-1.5 text-micro font-medium" style={{ background: 'hsl(var(--teal-light))', color: 'hsl(var(--teal))' }}>Free</span>
             </div>
-            <div className="flex items-center justify-between rounded-xl border border-border p-4">
+            <div className="flex items-center justify-between rounded-2xl border border-border p-5">
               <div>
-                <p className="text-sm font-medium">Email</p>
-                <p className="text-xs text-muted-foreground">{user?.email}</p>
+                <p className="text-card-title">Email</p>
+                <p className="text-micro text-muted-foreground">{user?.email}</p>
               </div>
             </div>
             <button onClick={signOut} className="btn-ghost w-full text-sm" style={{ color: 'hsl(var(--destructive))' }}>Sign Out</button>

@@ -54,6 +54,7 @@ export default {
         teal: {
           DEFAULT: "hsl(var(--teal))",
           light: "hsl(var(--teal-light))",
+          glow: "hsl(var(--teal-glow))",
         },
         lavender: {
           DEFAULT: "hsl(var(--lavender))",

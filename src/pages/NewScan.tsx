@@ -5,6 +5,13 @@ import { supabase } from '@/lib/supabase';
 import AppLayout from '@/components/AppLayout';
 import PageHeader from '@/components/PageHeader';
 
+const TIPS = [
+  { icon: '☀️', title: 'Natural Lighting', desc: 'Use even, natural light — avoid harsh shadows' },
+  { icon: '📸', title: 'Face Camera', desc: 'Look directly at the camera at eye level' },
+  { icon: '🧴', title: 'Clean Skin', desc: 'Remove makeup for the most accurate results' },
+  { icon: '😐', title: 'Neutral Expression', desc: 'Keep a relaxed, neutral face' },
+];
+
 export default function NewScan() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -32,22 +39,17 @@ export default function NewScan() {
   const handleUpload = async () => {
     if (!file || !user) return;
     setUploading(true);
-
     try {
       const ext = file.name.split('.').pop();
       const path = `${user.id}/${Date.now()}.${ext}`;
       const { error: uploadError } = await supabase.storage.from('scan-images').upload(path, file);
       if (uploadError) throw uploadError;
-
       const { data: { publicUrl } } = supabase.storage.from('scan-images').getPublicUrl(path);
-
-      // Create scan record with pending status
       const { data: scan, error: insertError } = await supabase.from('scans').insert({
         user_id: user.id,
         image_url: publicUrl,
         status: 'analyzing',
       }).select('id').single();
-
       if (insertError) throw insertError;
       navigate(`/scan/analyzing/${scan.id}`);
     } catch (err) {
@@ -59,19 +61,18 @@ export default function NewScan() {
 
   return (
     <AppLayout onSignOut={signOut}>
-      <div className="page-container">
+      <div className="page-container max-w-3xl">
         <PageHeader title="New Scan" subtitle="Upload a clear, well-lit photo of your face" />
 
-        {/* Instructions */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-3 fade-in stagger-1">
-          {[
-            { icon: '☀️', text: 'Use natural, even lighting' },
-            { icon: '📸', text: 'Face the camera directly' },
-            { icon: '🧴', text: 'Remove makeup if possible' },
-          ].map((tip, i) => (
-            <div key={i} className="glass-card flex items-center gap-3 p-4">
-              <span className="text-xl">{tip.icon}</span>
-              <span className="text-sm">{tip.text}</span>
+        {/* Tips */}
+        <div className="mb-8 grid gap-4 sm:grid-cols-2 fade-in stagger-1">
+          {TIPS.map((tip, i) => (
+            <div key={i} className="glass-card flex items-start gap-4 p-5">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-lg" style={{ background: 'hsl(var(--teal-light))' }}>{tip.icon}</span>
+              <div>
+                <p className="text-card-title">{tip.title}</p>
+                <p className="text-micro text-muted-foreground mt-0.5">{tip.desc}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -84,23 +85,28 @@ export default function NewScan() {
               onDragLeave={() => setDragOver(false)}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`glass-card flex cursor-pointer flex-col items-center justify-center py-20 transition-all ${dragOver ? 'ring-2 ring-primary' : ''}`}
+              className="glass-panel flex cursor-pointer flex-col items-center justify-center py-24 transition-all"
+              style={{
+                borderStyle: 'dashed',
+                borderWidth: '2px',
+                borderColor: dragOver ? 'hsl(var(--teal))' : 'hsl(var(--border))',
+              }}
             >
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full" style={{ background: 'hsl(var(--teal-light))' }}>
+              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl" style={{ background: 'hsl(var(--teal-light))' }}>
                 <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="hsl(var(--teal))" strokeWidth="1.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                 </svg>
               </div>
-              <p className="mb-1 font-medium">Drop your photo here</p>
-              <p className="text-sm text-muted-foreground">or click to browse from your device</p>
+              <p className="text-card-title mb-1">Drop your photo here</p>
+              <p className="text-micro text-muted-foreground">or click to browse from your device</p>
               <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
             </div>
           ) : (
-            <div className="glass-card">
-              <div className="mb-4 overflow-hidden rounded-xl">
-                <img src={preview} alt="Scan preview" className="mx-auto max-h-80 object-contain" />
+            <div className="glass-panel">
+              <div className="mb-6 overflow-hidden rounded-2xl" style={{ background: 'hsl(var(--muted))' }}>
+                <img src={preview} alt="Scan preview" className="mx-auto max-h-80 object-contain p-4" />
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <button onClick={() => { setPreview(null); setFile(null); }} className="btn-secondary flex-1">Choose Different</button>
                 <button onClick={handleUpload} disabled={uploading} className="btn-primary flex-1 disabled:opacity-50">
                   {uploading ? 'Uploading...' : 'Analyze My Skin'}
@@ -111,8 +117,8 @@ export default function NewScan() {
         </div>
 
         {/* Disclaimer */}
-        <div className="mt-6 rounded-xl p-4 text-center fade-in stagger-3" style={{ background: 'hsl(var(--lavender-light))' }}>
-          <p className="text-xs text-muted-foreground">
+        <div className="mt-8 rounded-2xl p-5 text-center fade-in stagger-3" style={{ background: 'hsl(var(--lavender-light))' }}>
+          <p className="text-micro text-muted-foreground">
             ℹ️ SkinPulse provides general wellness insights only. This is not a medical diagnosis or substitute for professional dermatological care.
           </p>
         </div>
