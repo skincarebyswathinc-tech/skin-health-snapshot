@@ -19,6 +19,7 @@ import Settings from "./pages/Settings";
 import Upgrade from "./pages/Upgrade";
 import Referrals from "./pages/Referrals";
 import AdminAnalytics from "./pages/AdminAnalytics";
+import SkincareRoutine from "./pages/SkincareRoutine";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/upgrade" element={<ProtectedRoute><Upgrade /></ProtectedRoute>} />
             <Route path="/referrals" element={<ProtectedRoute><Referrals /></ProtectedRoute>} />
             <Route path="/analytics" element={<ProtectedRoute><AdminAnalytics /></ProtectedRoute>} />
+            <Route path="/routine" element={<ProtectedRoute><SkincareRoutine /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
