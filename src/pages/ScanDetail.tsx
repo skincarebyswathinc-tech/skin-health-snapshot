@@ -12,6 +12,7 @@ import ShareCard from '@/components/ShareCard';
 import SkinReport from '@/components/SkinReport';
 import PremiumGate from '@/components/PremiumGate';
 import SkinHeatmap from '@/components/SkinHeatmap';
+import NutritionPanel from '@/components/NutritionPanel';
 
 interface ScanData {
   id: string;
