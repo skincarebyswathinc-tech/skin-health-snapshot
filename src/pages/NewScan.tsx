@@ -2,8 +2,10 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
+import { useSubscription, incrementScanCount, trackEvent } from '@/hooks/useSubscription';
 import AppLayout from '@/components/AppLayout';
 import PageHeader from '@/components/PageHeader';
+import ScanLimitBanner from '@/components/ScanLimitBanner';
 
 const TIPS = [
   { icon: '☀️', title: 'Natural Lighting', desc: 'Use even, natural light — avoid harsh shadows' },
@@ -15,6 +17,7 @@ const TIPS = [
 export default function NewScan() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { canScan, scanCount, scanLimit, isPremium } = useSubscription();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -38,6 +41,10 @@ export default function NewScan() {
 
   const handleUpload = async () => {
     if (!file || !user) return;
+    if (!canScan) {
+      navigate('/upgrade');
+      return;
+    }
     setUploading(true);
     try {
       const ext = file.name.split('.').pop();
@@ -51,6 +58,13 @@ export default function NewScan() {
         status: 'analyzing',
       }).select('id').single();
       if (insertError) throw insertError;
+
+      // Increment scan count and track event
+      await Promise.all([
+        incrementScanCount(user.id),
+        trackEvent(user.id, 'scan_uploaded'),
+      ]);
+
       navigate(`/scan/analyzing/${scan.id}`);
     } catch (err) {
       console.error(err);
@@ -63,6 +77,8 @@ export default function NewScan() {
     <AppLayout onSignOut={signOut}>
       <div className="page-container max-w-3xl">
         <PageHeader title="New Scan" subtitle="Upload a clear, well-lit photo of your face" />
+
+        <ScanLimitBanner scanCount={scanCount} scanLimit={typeof scanLimit === 'number' ? scanLimit : 999} isPremium={isPremium} />
 
         {/* Tips */}
         <div className="mb-8 grid gap-4 sm:grid-cols-2 fade-in stagger-1">
@@ -79,7 +95,18 @@ export default function NewScan() {
 
         {/* Upload Area */}
         <div className="fade-in stagger-2">
-          {!preview ? (
+          {!canScan ? (
+            <div className="glass-panel text-center py-16">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl" style={{ background: 'hsl(var(--lavender-light))' }}>
+                <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="hsl(var(--accent))" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                </svg>
+              </div>
+              <p className="text-card-title mb-1">Monthly scan limit reached</p>
+              <p className="text-micro text-muted-foreground mb-5">Upgrade to Premium for unlimited scans.</p>
+              <button onClick={() => navigate('/upgrade')} className="btn-primary">Upgrade to Premium</button>
+            </div>
+          ) : !preview ? (
             <div
               onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}

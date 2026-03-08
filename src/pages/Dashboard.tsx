@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
+import { useSubscription } from '@/hooks/useSubscription';
 import AppLayout from '@/components/AppLayout';
 import ScoreRing from '@/components/ScoreRing';
 import EmptyState from '@/components/EmptyState';
@@ -20,10 +21,12 @@ interface Profile {
 export default function Dashboard() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { isPremium, scanCount, scanLimit, canScan } = useSubscription();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [latestScan, setLatestScan] = useState<Scan | null>(null);
   const [recentScans, setRecentScans] = useState<Scan[]>([]);
   const [onboardingComplete, setOnboardingComplete] = useState<boolean | null>(null);
+  const [daysSinceLastScan, setDaysSinceLastScan] = useState<number | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -41,6 +44,8 @@ export default function Dashboard() {
         if (data && data.length > 0) {
           setLatestScan(data[0]);
           setRecentScans(data);
+          const lastDate = new Date(data[0].created_at);
+          setDaysSinceLastScan(Math.floor((Date.now() - lastDate.getTime()) / (1000 * 60 * 60 * 24)));
         }
       });
   }, [user, navigate]);
@@ -59,13 +64,45 @@ export default function Dashboard() {
   return (
     <AppLayout onSignOut={signOut}>
       <div className="page-container">
-        {/* Welcome */}
+        {/* Welcome + Premium badge */}
         <div className="mb-8 fade-in">
-          <h1 className="text-display">
-            {greeting()}{profile?.first_name ? `, ${profile.first_name}` : ''}.
-          </h1>
+          <div className="flex items-center gap-3 mb-1 flex-wrap">
+            <h1 className="text-display">
+              {greeting()}{profile?.first_name ? `, ${profile.first_name}` : ''}.
+            </h1>
+            {isPremium && (
+              <span className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-micro font-medium" style={{ background: 'hsl(var(--teal-light))', color: 'hsl(var(--teal))' }}>
+                👑 Premium
+              </span>
+            )}
+          </div>
           <p className="mt-2 text-body text-muted-foreground">Your skin wellness overview</p>
         </div>
+
+        {/* Retention messaging */}
+        {daysSinceLastScan !== null && daysSinceLastScan >= 14 && (
+          <div className="mb-6 rounded-2xl p-5 fade-in" style={{ background: 'hsl(var(--teal-light))' }}>
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <div>
+                <p className="text-card-title">It's time for your next skin scan</p>
+                <p className="text-micro text-muted-foreground">Your last scan was {daysSinceLastScan} days ago. Regular scans help track progress.</p>
+              </div>
+              <button onClick={() => navigate('/scan/new')} className="btn-primary text-sm shrink-0">Scan Now</button>
+            </div>
+          </div>
+        )}
+
+        {/* Scan limit for free users */}
+        {!isPremium && (
+          <div className="mb-6 flex items-center justify-between rounded-2xl border p-4 fade-in" style={{ borderColor: 'hsl(var(--border))' }}>
+            <div className="flex items-center gap-3">
+              <span className="text-micro text-muted-foreground">
+                Scans this month: <strong className="text-foreground">{scanCount}/{typeof scanLimit === 'number' ? scanLimit : '∞'}</strong>
+              </span>
+            </div>
+            <button onClick={() => navigate('/upgrade')} className="text-micro font-medium" style={{ color: 'hsl(var(--teal))' }}>Upgrade →</button>
+          </div>
+        )}
 
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Skin Score Card */}
@@ -117,9 +154,9 @@ export default function Dashboard() {
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'hsl(var(--lavender-light))' }}>📈</span>
                 <span>Skin Progress</span>
               </button>
-              <button onClick={() => navigate('/history')} className="flex w-full items-center gap-3 rounded-xl p-3 text-sm transition-colors hover:bg-muted">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'hsl(var(--lavender-light))' }}>📊</span>
-                <span>Scan History</span>
+              <button onClick={() => navigate('/referrals')} className="flex w-full items-center gap-3 rounded-xl p-3 text-sm transition-colors hover:bg-muted">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'hsl(var(--teal-light))' }}>🎁</span>
+                <span>Refer Friends</span>
               </button>
               <button onClick={() => navigate('/settings')} className="flex w-full items-center gap-3 rounded-xl p-3 text-sm transition-colors hover:bg-muted">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: 'hsl(var(--muted))' }}>⚙️</span>

@@ -138,9 +138,16 @@ export default function Settings() {
             <div className="flex items-center justify-between rounded-2xl border border-border p-5">
               <div>
                 <p className="text-card-title">Subscription</p>
-                <p className="text-micro text-muted-foreground">Free plan — upgrade coming soon</p>
+                <p className="text-micro text-muted-foreground">{isPremium ? 'Premium plan — all features unlocked' : 'Free plan — limited features'}</p>
               </div>
-              <span className="rounded-full px-3 py-1.5 text-micro font-medium" style={{ background: 'hsl(var(--teal-light))', color: 'hsl(var(--teal))' }}>Free</span>
+              <div className="flex items-center gap-2">
+                <span className="rounded-full px-3 py-1.5 text-micro font-medium" style={{ background: 'hsl(var(--teal-light))', color: 'hsl(var(--teal))' }}>
+                  {isPremium ? '👑 Premium' : 'Free'}
+                </span>
+                {!isPremium && (
+                  <button onClick={() => navigate('/upgrade')} className="btn-primary text-micro py-1.5 px-4">Upgrade</button>
+                )}
+              </div>
             </div>
             <div className="flex items-center justify-between rounded-2xl border border-border p-5">
               <div>
