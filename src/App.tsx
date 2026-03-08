@@ -20,6 +20,7 @@ import Upgrade from "./pages/Upgrade";
 import Referrals from "./pages/Referrals";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import SkincareRoutine from "./pages/SkincareRoutine";
+import Install from "./pages/Install";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
