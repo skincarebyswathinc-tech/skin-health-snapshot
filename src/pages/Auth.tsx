@@ -102,6 +102,7 @@ export default function Auth() {
               </button>
             </>
           )}
+        </form>
 
         <div className="mt-5 text-center text-micro text-muted-foreground fade-in stagger-2">
           {mode === 'signin' && (
