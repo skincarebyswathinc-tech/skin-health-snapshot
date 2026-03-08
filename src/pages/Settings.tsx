@@ -21,6 +21,8 @@ interface Prefs {
 
 export default function Settings() {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const { isPremium, plan } = useSubscription();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [prefs, setPrefs] = useState<Prefs | null>(null);
   const [saving, setSaving] = useState(false);
