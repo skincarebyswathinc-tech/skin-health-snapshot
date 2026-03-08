@@ -36,6 +36,8 @@ const App = () => (
             <Route path="/scan/analyzing/:scanId" element={<ProtectedRoute><AnalysisLoading /></ProtectedRoute>} />
             <Route path="/scan/:scanId" element={<ProtectedRoute><ScanDetail /></ProtectedRoute>} />
             <Route path="/history" element={<ProtectedRoute><ScanHistory /></ProtectedRoute>} />
+            <Route path="/journal" element={<ProtectedRoute><Journal /></ProtectedRoute>} />
+            <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
             <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
