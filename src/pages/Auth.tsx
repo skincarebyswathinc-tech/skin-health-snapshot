@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { lovable } from '@/integrations/lovable/index';
 
 export default function Auth() {
   const [mode, setMode] = useState<'signin' | 'signup' | 'reset'>('signin');
